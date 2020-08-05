@@ -1,0 +1,31 @@
+{
+  "name": "react-web-iamport-nicepay",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "next": "9.5.1",
+    "react": "16.13.1",
+    "react-dom": "16.13.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "next",
+    "prod": "next start",
+    "build": "next build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wlsgml719/react-web-iamport-nicepay.git"
+  },
+  "keywords": [
+    "nicepay"
+  ],
+  "author": "jinhee kang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wlsgml719/react-web-iamport-nicepay/issues"
+  },
+  "homepage": "https://github.com/wlsgml719/react-web-iamport-nicepay#readme"
+}
