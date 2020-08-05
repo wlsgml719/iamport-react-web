@@ -30,6 +30,16 @@ export default class MyDocument extends Document {
             type="text/css"
             href="https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css"
           />
+          {/* iamport */}
+          <script
+            type="text/javascript"
+            src="https://code.jquery.com/jquery-1.12.4.min.js"
+          ></script>
+          <script
+            type="text/javascript"
+            src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"
+          ></script>
+          {/* iamport */}
           {this.props.dangerousAsPath !== "/test" && (
             <link rel="stylesheet" href="/stylesheet/style.css" />
           )}
