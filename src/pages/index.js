@@ -8,34 +8,37 @@ import Head from "next/head";
 const Index = () => {
   const router = useRouter();
 
-  // const IMP = window.IMP;
-
-  const handlePaments = () => {
-    IMP.request_pay(
-      {
-        pg: "nice", // version 1.1.0부터 지원.
-        pay_method: "card",
-        merchant_uid: "merchant_" + new Date().getTime(),
-        name: "주문명:결제테스트",
-        amount: 14000,
-        buyer_email: "iamport@siot.do",
-        buyer_name: "구매자이름",
-        buyer_tel: "010-1234-5678",
-        buyer_addr: "서울특별시 강남구 삼성동",
-        buyer_postcode: "123-456",
-        m_redirect_url: "https://www.yourdomain.com/payments/complete",
-      },
-      (res) => {
-        if (res) {
-          console.log("rsp ", rsp);
-        } else {
-          console.log("err ", res.error_msg);
+  const handlePaments = (e) => {
+    try {
+      IMP.request_pay(
+        {
+          pg: "nice", // version 1.1.0부터 지원.
+          pay_method: "card",
+          merchant_uid: "merchant_" + new Date().getTime(),
+          name: "주문명:결제테스트",
+          amount: 14000,
+          buyer_email: "iamport@siot.do",
+          buyer_name: "구매자이름",
+          buyer_tel: "010-1234-5678",
+          buyer_addr: "서울특별시 강남구 삼성동",
+          buyer_postcode: "123-456",
+          m_redirect_url: "https://www.yourdomain.com/payments/complete",
+        },
+        (res) => {
+          if (res.success) {
+            console.log("rsp ", rsp);
+          } else {
+            console.log("err ", res.error_msg);
+          }
         }
-      }
-    );
+      );
+    } catch (e) {
+      console.log("error ", e);
+    }
   };
 
   useEffect(() => {
+    console.log("useEffect");
     if (window.IMP) {
       const { IMP } = window;
       IMP.init("imp94304194");
@@ -44,7 +47,7 @@ const Index = () => {
 
   return (
     <div style={styles.container}>
-      {/* <Head>
+      <Head>
         <script
           type="text/javascript"
           src="https://code.jquery.com/jquery-1.12.4.min.js"
@@ -53,11 +56,12 @@ const Index = () => {
           type="text/javascript"
           src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"
         ></script>
-      </Head> */}
+      </Head>
       <span style={styles.title}>iamport Nicepay Payments</span>
       <button style={styles.pay_btn} onClick={handlePaments}>
-        결제하기
+        paments
       </button>
+      {console.log("render")}
     </div>
   );
 };
@@ -75,6 +79,7 @@ const styles = {
   },
   pay_btn: {
     width: 300,
+    margin: 10,
     border: 0,
   },
 };
