@@ -1,47 +1,48 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 // import { Link } from "next/link";
 import Iamport from "react-iamport";
-import axios from "axios";
 import Head from "next/head";
+import { axiosInstance as axios } from "../utils/helper";
 
 const Index = () => {
+  const [data, setData] = useState({});
+  const [useBilling, setUseBilling] = useState(true);
   const router = useRouter();
 
-  const handlePaments = (e) => {
-    try {
-      IMP.request_pay(
-        {
-          pg: "nice", // version 1.1.0부터 지원.
-          pay_method: "card",
-          merchant_uid: "merchant_" + new Date().getTime(),
-          name: "주문명:결제테스트",
-          amount: 14000,
-          buyer_email: "iamport@siot.do",
-          buyer_name: "구매자이름",
-          buyer_tel: "010-1234-5678",
-          buyer_addr: "서울특별시 강남구 삼성동",
-          buyer_postcode: "123-456",
-          m_redirect_url: "https://www.yourdomain.com/payments/complete",
-        },
-        (res) => {
-          if (res.success) {
-            console.log("rsp ", rsp);
-          } else {
-            console.log("err ", res.error_msg);
-          }
-        }
-      );
-    } catch (e) {
-      console.log("error ", e);
-    }
+  const requestBillingKey = async (e) => {
+    await axios
+      .post("http://192.168.0.19:3002/subscribe/key", {
+        cardNum: "5570420207512020",
+        expiry: "0225",
+        birth: "0719",
+        pwd2Digit: "22",
+        customer_uid: "jinhee_0001_1234",
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const billingPayment = (e) => {
+    e.preventDefault();
+    if (!useBilling) setUseBilling(true);
+    requestBillingKey();
+  };
+
+  const defaultPayment = (e) => {
+    e.preventDefault();
+    if (!!useBilling) setUseBilling(false);
   };
 
   useEffect(() => {
-    console.log("useEffect");
     if (window.IMP) {
       const { IMP } = window;
-      IMP.init("imp94304194");
+      // const userCode = "imp94304194";
+      // IMP.init(userCode);
     }
   }, []);
 
@@ -58,10 +59,36 @@ const Index = () => {
         ></script>
       </Head>
       <span style={styles.title}>iamport Nicepay Payments</span>
-      <button style={styles.pay_btn} onClick={handlePaments}>
-        paments
-      </button>
-      {console.log("render")}
+      <form>
+        <input
+          style={styles.pay_title}
+          type={"radio"}
+          name={"payment_type"}
+          checked={useBilling}
+          onChange={billingPayment}
+        />
+        <label for={"billing"}>간편 카드 등록 결제</label>
+        <button style={styles.pay_billing} onClick={billingPayment} />
+
+        <br />
+
+        <input
+          style={styles.pay_title}
+          type={"radio"}
+          name={"payment_type"}
+          onChange={defaultPayment}
+          checked={!useBilling}
+        />
+        <label for={"default"}>일반 결제</label>
+
+        <br />
+        <button style={styles.pay_default} onClick={defaultPayment}>
+          신용카드
+        </button>
+        <button style={styles.pay_default} onClick={defaultPayment}>
+          휴대전화
+        </button>
+      </form>
     </div>
   );
 };
@@ -79,8 +106,29 @@ const styles = {
   },
   pay_btn: {
     width: 300,
+    height: 50,
     margin: 10,
     border: 0,
+  },
+  pay_title: {
+    marginBottom: 18,
+    marginRight: 5,
+  },
+  pay_billing: {
+    width: 300,
+    height: 200,
+    textAling: "center",
+    alignItems: "center",
+    backgroundColor: "white",
+    borderRadius: 5,
+    boxShadow: "2px 2px 2px 2px rgba(0.1,0.1,0.1,0.1)",
+    marginBottom: 45,
+  },
+  pay_default: {
+    width: 200,
+    height: 50,
+    backgroundColor: "white",
+    marginBottom: 5,
   },
 };
 export default Index;
