@@ -6,18 +6,21 @@ import Head from "next/head";
 import { axiosInstance as axios } from "../utils/helper";
 
 const Index = () => {
-  const [data, setData] = useState({});
+  const [product, setProduct] = useState({ prod_amount: "", prod_name: "" });
   const [useBilling, setUseBilling] = useState(true);
   const router = useRouter();
 
-  const requestBillingKey = async (e) => {
+  const saveBillingKey = async (e) => {
+    e.preventDefault(); // form action 막기
+
+    // API host 설정
     await axios
       .post("http://192.168.0.19:3002/subscribe/key", {
-        cardNum: "5570420207512020",
-        expiry: "0225",
-        birth: "0719",
-        pwd2Digit: "22",
-        customer_uid: "jinhee_0001_1234",
+        cardNum: "5310-7070-1089-0733",
+        expiry: "2023-03",
+        birth: "910827",
+        pwd2Digit: "24",
+        customer_uid: "taehong_0001_1234",
       })
       .then((res) => {
         console.log(res);
@@ -25,6 +28,36 @@ const Index = () => {
       .catch((e) => {
         console.log(e);
       });
+  };
+
+  const requestSubscribe = async (e) => {
+    e.preventDefault(); // form action 막기
+    // 유저 아이디(이메일), 간편비밀번호 입력값, 상품정보
+
+    const email = "wlsgml719@naver.com";
+    const password = 123456;
+
+    await axios
+      .post("http://192.168.0.19:3002/subscribe/payments/schedule", {
+        // product,
+        email: "wlsgml719@naver.com",
+        password: 123456,
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const handleChange = (e) => {
+    e.preventDefault();
+    if (e.target.name === "prod_name") {
+      setProduct({ [e.target.name]: e.target.value, ...product });
+    } else if (e.target.name === "prod_amount") {
+      setProduct({ [e.target.name]: e.target.value, ...product });
+    }
   };
 
   const billingPayment = (e) => {
@@ -44,7 +77,7 @@ const Index = () => {
       // const userCode = "imp94304194";
       // IMP.init(userCode);
     }
-  }, []);
+  });
 
   return (
     <div style={styles.container}>
@@ -58,7 +91,28 @@ const Index = () => {
           src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"
         ></script>
       </Head>
-      <span style={styles.title}>iamport Nicepay Payments</span>
+
+      <h1 style={styles.title}>iamport Nicepay Payments</h1>
+      <form style={styles.prod_container}>
+        <label style={styles.prod_name} htmlFor={"prod_name"}>
+          상품명
+        </label>
+        <input type={"text"} name={"prod_name"} onChange={handleChange} />
+
+        <br />
+
+        <label style={styles.prod_amount} htmlFor={"prod_amount"}>
+          가격
+        </label>
+        <input type={"text"} name={"prod_amount"} onChange={handleChange} />
+        {/* {console.log(product)} */}
+        <button
+          style={(styles.pay_default, { flex: 1 })}
+          onClick={requestSubscribe}
+        >
+          간편 카드로 결제
+        </button>
+      </form>
       <form>
         <input
           style={styles.pay_title}
@@ -67,8 +121,9 @@ const Index = () => {
           checked={useBilling}
           onChange={billingPayment}
         />
-        <label for={"billing"}>간편 카드 등록 결제</label>
-        <button style={styles.pay_billing} onClick={billingPayment} />
+        <label htmlFor={"billing"}>간편 카드 등록 결제</label>
+
+        <button style={styles.pay_billing} onClick={saveBillingKey} />
 
         <br />
 
@@ -79,7 +134,7 @@ const Index = () => {
           onChange={defaultPayment}
           checked={!useBilling}
         />
-        <label for={"default"}>일반 결제</label>
+        <label htmlFor={"default"}>일반 결제</label>
 
         <br />
         <button style={styles.pay_default} onClick={defaultPayment}>
@@ -130,5 +185,10 @@ const styles = {
     backgroundColor: "white",
     marginBottom: 5,
   },
+  prod_container: {
+    alignSelf: "start",
+  },
+  prod_name: { display: "flex", width: 200, marginRight: 5 },
+  prod_amount: { display: "flex", width: 200, marginRight: 5 },
 };
 export default Index;
